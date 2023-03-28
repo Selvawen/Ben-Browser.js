@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>The Ben Browser</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+  <!-- Create the UI elements for the browser -->
+  <div id="toolbar">
+    <button id="back-btn">Back</button>
+    <button id="forward-btn">Forward</button>
+    <button id="refresh-btn">Refresh</button>
+    <input type="text" id="search-bar" placeholder="Enter URL">
+    <button id="go-btn">Go</button>
+  </div>
+  <iframe id="display-area"></iframe>
+
+  <!-- Add JavaScript to handle user actions and display web pages -->
+  <script>
+    const backBtn = document.getElementById("back-btn");
+    const forwardBtn = document.getElementById("forward-btn");
+    const refreshBtn = document.getElementById("refresh-btn");
+    const searchBar = document.getElementById("search-bar");
+    const goBtn = document.getElementById("go-btn");
+    const displayArea = document.getElementById("display-area");
+
+    let historyIndex = 0;
+    let history = [];
+
+    function navigateTo(url) {
+      // Update the iframe to display the specified URL
+      displayArea.src = url;
+
+      // Update the browsing history
+      history = history.slice(0, historyIndex + 1);
+      history.push(url);
+      historyIndex++;
+
+      // Update the UI
+      updateUI();
+    }
+
+    function updateUI() {
+      // Disable the back button if there is no page to go back to
+      backBtn.disabled = historyIndex === 0;
+
+      // Disable the forward button if there is no page to go forward to
+      forwardBtn.disabled = historyIndex === history.length - 1;
+
+      // Update the search bar with the current URL
+      searchBar.value = history[historyIndex];
+    }
+
+    function goBack() {
+      if (historyIndex > 0) {
+        historyIndex--;
+        navigateTo(history[historyIndex]);
+      }
+    }
+
+    function goForward() {
+      if (historyIndex < history.length - 1) {
+        historyIndex++;
+        navigateTo(history[historyIndex]);
+      }
+    }
+
+    function refreshPage() {
+      navigateTo(history[historyIndex]);
+    }
+
+    function goToUrl() {
+      const url = searchBar.value;
+      navigateTo(url);
+    }
+
+    // Add event listeners to the UI elements
+    backBtn.addEventListener("click", goBack);
+    forwardBtn.addEventListener("click", goForward);
+    refreshBtn.addEventListener("click", refreshPage);
+    goBtn.addEventListener("click", goToUrl);
+  </script>
+</body>
+</html>
